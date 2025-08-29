@@ -36,6 +36,17 @@ def predict():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/')
+def home():
+    return jsonify({
+        'message': 'Face Palsy Detection API',
+        'endpoints': {
+            'predict': 'POST /predict (upload image)',
+            'health': 'GET /health'
+        },
+        'usage': 'curl -X POST -F "image=@image.jpg" /predict'
+    })
+
 @app.route('/health')
 def health():
     return jsonify({'status': 'healthy'})
