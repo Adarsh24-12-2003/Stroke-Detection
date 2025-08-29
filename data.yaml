@@ -1,0 +1,11 @@
+names:
+- Normal_Eyes
+- Normal_Mouth
+- SlightPalsy_Eyes
+- SlightPalsy_Mouth
+- StrongPalsy_Eyes
+- StrongPalsy_Mouth
+nc: 6
+test: test/images
+train: train/images
+val: valid/images
