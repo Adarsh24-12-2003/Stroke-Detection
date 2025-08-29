@@ -6,15 +6,11 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Load model directly with PyTorch
-try:
-    model = torch.jit.load('best.pt', map_location='cpu')
-    model.eval()
-except:
-    # Fallback: load as state dict
-    model = torch.load('best.pt', map_location='cpu')
-    if isinstance(model, dict):
-        model = model.get('model', model)
+# Load model with ultralytics
+from ultralytics import YOLO
+import os
+os.environ['TORCH_SERIALIZATION_SAFE_GLOBALS'] = 'True'
+model = YOLO('best.pt')
 
 class_names = ['Normal_Eyes', 'Normal_Mouth', 'SlightPalsy_Eyes', 'SlightPalsy_Mouth', 'StrongPalsy_Eyes', 'StrongPalsy_Mouth']
 
@@ -22,23 +18,19 @@ class_names = ['Normal_Eyes', 'Normal_Mouth', 'SlightPalsy_Eyes', 'SlightPalsy_M
 def predict():
     try:
         file = request.files['image']
-        image = Image.open(file.stream).convert('RGB')
+        image = Image.open(file.stream)
+        results = model(image)
         
-        # Simple preprocessing
-        image = image.resize((640, 640))
-        img_array = np.array(image) / 255.0
-        img_tensor = torch.from_numpy(img_array).permute(2, 0, 1).unsqueeze(0).float()
-        
-        # Inference
-        with torch.no_grad():
-            results = model(img_tensor)
-        
-        # Simple response
-        predictions = [{
-            'status': 'Model loaded successfully',
-            'image_processed': True,
-            'classes_available': class_names
-        }]
+        predictions = []
+        for r in results:
+            boxes = r.boxes
+            if boxes is not None:
+                for box in boxes:
+                    predictions.append({
+                        'class': model.names[int(box.cls)],
+                        'confidence': float(box.conf),
+                        'bbox': box.xyxy[0].tolist()
+                    })
         
         return jsonify({'predictions': predictions})
     except Exception as e:
