@@ -1,10 +1,7 @@
 from flask import Flask, request, jsonify
 from ultralytics import YOLO
-import cv2
-import numpy as np
 from PIL import Image
 import io
-import base64
 
 app = Flask(__name__)
 model = YOLO('best.pt')
