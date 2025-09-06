@@ -17,7 +17,7 @@ CORS(app)
 from ultralytics import YOLO
 import os
 os.environ['TORCH_SERIALIZATION_SAFE_GLOBALS'] = 'True'
-model = YOLO('best.pt')
+model = YOLO('runs/detect/train5/weights/best.pt')
 
 class_names = ['Normal_Eyes', 'Normal_Mouth', 'SlightPalsy_Eyes', 'SlightPalsy_Mouth', 'StrongPalsy_Eyes', 'StrongPalsy_Mouth']
 
