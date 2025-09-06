@@ -21,8 +21,14 @@ model = YOLO('best.pt')
 
 class_names = ['Normal_Eyes', 'Normal_Mouth', 'SlightPalsy_Eyes', 'SlightPalsy_Mouth', 'StrongPalsy_Eyes', 'StrongPalsy_Mouth']
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def predict():
+    if request.method == 'GET':
+        return jsonify({
+            'error': 'GET method not supported',
+            'message': 'Use POST method with image file',
+            'example': 'curl -X POST -F "image=@photo.jpg" https://stroke-detection-loa4.onrender.com/predict'
+        }), 405
     try:
         if 'image' not in request.files:
             return jsonify({'error': 'No image file provided'}), 400
@@ -98,6 +104,18 @@ def home():
 @app.route('/health')
 def health():
     return jsonify({'status': 'healthy'})
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        'error': '404 Not Found',
+        'message': 'Endpoint not found',
+        'available_endpoints': {
+            'home': 'GET /',
+            'health': 'GET /health',
+            'predict': 'POST /predict (with image file)'
+        }
+    }), 404
 
 if __name__ == '__main__':
     import os
