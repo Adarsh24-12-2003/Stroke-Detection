@@ -17,7 +17,7 @@ CORS(app)
 from ultralytics import YOLO
 import os
 os.environ['TORCH_SERIALIZATION_SAFE_GLOBALS'] = 'True'
-model = YOLO('runs/detect/train5/weights/best.pt')
+model = YOLO('runs/detect/train11/weights/best.pt')
 
 class_names = ['Normal_Eyes', 'Normal_Mouth', 'SlightPalsy_Eyes', 'SlightPalsy_Mouth', 'StrongPalsy_Eyes', 'StrongPalsy_Mouth']
 
@@ -40,7 +40,7 @@ def predict():
             return jsonify({'error': 'File is not an image'}), 400
 
         image = Image.open(file.stream).convert("RGB")
-        results = model(image)
+        results = model(image, conf=0.6)
         
         # Create annotated image (not true heatmap)
         img_array = np.array(image)
