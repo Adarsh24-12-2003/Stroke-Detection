@@ -36,7 +36,7 @@ def predict():
         image = Image.open(file.stream).convert("RGB")
         results = model(image)
         
-        # Create heatmap
+        # Create annotated image (not true heatmap)
         img_array = np.array(image)
         annotated_img = img_array.copy()
         
@@ -79,7 +79,7 @@ def predict():
         
         return jsonify({
             'predictions': predictions,
-            'heatmap': img_base64
+            'annotated_image': img_base64
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
