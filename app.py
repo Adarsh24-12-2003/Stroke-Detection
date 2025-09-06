@@ -40,7 +40,7 @@ def predict():
             return jsonify({'error': 'File is not an image'}), 400
 
         image = Image.open(file.stream).convert("RGB")
-        results = model(image, conf=0.6)
+        results = model(image, conf=0.8)
         
         # Create annotated image (not true heatmap)
         img_array = np.array(image)
